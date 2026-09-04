@@ -1,0 +1,28 @@
+# Runtime data can contain Microsoft session and machine information.
+dist/
+release/
+BrowserProfile/
+Logs/
+Temp/
+config.json
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+src/devtools_*.py
+
+# PyInstaller
+.build/
+build/
+*.spec
+
+# Editors and Windows
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
