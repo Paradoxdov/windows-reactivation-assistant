@@ -1,75 +1,89 @@
 # Portable Windows Reactivation Assistant
 
-Portable Windows Reactivation Assistant подготавливает официальный сценарий
-офлайн-реактивации Windows через Microsoft Product Activation Portal и
-останавливается перед ручным Submit.
+A portable assistant for IT professionals restoring activation on licensed
+Windows PCs through Microsoft's Product Activation Portal. It handles the
+repetitive preparation: reading licensing information, retrieving the
+Installation ID, navigating the portal and filling in the form.
 
-Программа предназначена для обслуживания Windows с действительной лицензией.
-Она не обходит лицензирование, не устанавливает ключи и не активирует Windows
-самостоятельно. Это независимый проект, не связанный с Microsoft.
+**Version 1.0 automates preparation up to Submit.** The operator completes the
+remaining steps manually. Automating Confirmation ID retrieval and application
+is the next development stage, not a feature ruled out of the project.
 
-Коротко: это не «активатор», а контролируемый помощник оператора по официальной
-реактивации.
+This is an independent project, not affiliated with Microsoft. It does not
+bypass licensing. The current version does not install product keys or apply
+a Confirmation ID automatically.
 
-## Что делает
+## Why use it?
 
-```text
-запуск → чтение сведений о Windows и лицензии → получение Installation ID
-→ запуск Edge → официальный портал → CAPTCHA / вход вручную
-→ выбор продукта и версии Windows → вставка Installation ID
-→ обнаружение кнопки Submit → безопасная остановка
-```
+- **Portable:** run the executable without installing Python or a separate WebDriver.
+- **Less repetitive work:** retrieve the Installation ID and prepare the portal form automatically.
+- **Operator control:** review the completed form before submitting it manually.
+- **Official workflow:** use Microsoft's portal, not a third-party activation service.
+- **Dedicated browser profile:** keep the servicing session separate from the user's regular Edge profile.
+- **Diagnostics and privacy:** redacted logs, named errors and guarded local-data cleanup.
 
-Кнопка **Submit не нажимается**, и программа не вызывает точку отправки
-напрямую. Installation ID вставляется в поле официального портала; как и для
-любой современной веб-формы, его следует считать доступным самому порталу уже
-при вводе. Программа не изменяет состояние лицензии компьютера. Оператор
-проверяет введённые данные и продолжает официальный процесс вручную.
+## Who is it for?
 
-Работа с лицензией до этого момента выполняется только на чтение через
-`SoftwareLicensingProduct`. Программа не вызывает `slmgr /ipk`, `/upk`,
-`/cpky`, `/ato` или `/atp`.
+- PC repair technicians and service centres.
+- System administrators and internal IT support teams.
+- Managed service providers and on-site IT specialists.
+- Technicians servicing licensed PCs after repairs, hardware changes or Windows reinstallation.
 
-## Почему это удобно
+## How version 1.0 works
 
-- portable-запуск без установки и без отдельного WebDriver;
-- автоматизация повторяющихся шагов при сохранении ручного контроля;
-- официальный портал Microsoft вместо сторонних сервисов активации;
-- жёсткая остановка перед Submit и отказ от действий на посторонних доменах;
-- отдельный профиль Edge, маскирование журналов и управляемая очистка данных;
-- понятные этапы, диагностические сообщения и безопасный отказ при изменении
-  структуры портала.
+1. Reads the Windows edition, build and licensing information.
+2. Retrieves the Offline Installation ID from Windows.
+3. Opens Microsoft Edge with a dedicated local profile.
+4. Opens the official Microsoft Product Activation Portal.
+5. Waits while the operator completes CAPTCHA and sign-in, if required.
+6. Selects the product, Windows version or Installation ID block size.
+7. Fills in the Installation ID and verifies the entered value.
+8. Locates Submit and hands control back to the operator.
 
-## Для кого
+The assistant **does not click Submit or call a submission endpoint directly**.
+Once a value is entered into a web form, it should nevertheless be treated as
+available to the portal's own scripts. The current program does not change the
+PC's licensing state.
 
-- сервисные инженеры и ремонтные центры;
-- системные администраторы и корпоративные службы поддержки;
-- MSP и выездные IT-команды;
-- специалисты, восстанавливающие лицензированные ПК после ремонта, замены
-  оборудования или переустановки Windows.
+Licensing queries are read-only and use `SoftwareLicensingProduct`. The current
+version does not invoke `slmgr /ipk`, `/upk`, `/cpky`, `/ato` or `/atp`.
 
-## Требования
+## Current scope and next stage
 
-- Windows 10 или Windows 11;
-- установленный Microsoft Edge;
-- лицензия Windows, для которой доступен официальный офлайн-сценарий;
-- подключение к сервисам Microsoft на этапе работы с порталом.
+**Available in v1.0:** Windows and license detection, Installation ID retrieval,
+portal navigation, form filling and handoff before Submit.
 
-## Запуск готовой portable-сборки
+**Next automation stage:** submitting the Installation ID, retrieving the
+Confirmation ID and applying it to complete reactivation, after validating the
+full workflow on a target PC.
 
-Готовый EXE и его SHA-256 опубликованы на странице
+These follow-on steps are not yet automated in the published v1.0 executable.
+They are a continuation of the intended workflow, not a permanent exclusion.
+Until then, the operator continues manually using the portal's instructions.
+
+## Requirements
+
+- Windows 10 or Windows 11.
+- Microsoft Edge installed.
+- A Windows license eligible for the official offline activation workflow.
+- Connectivity to Microsoft's services during the portal steps.
+
+## Download and run
+
+Download `WindowsReactivationAssistant.exe` and `SHA256SUMS.txt` from
 [Releases](https://github.com/Paradoxdov/windows-reactivation-assistant/releases/latest).
-Сборка не подписана цифровым сертификатом, поэтому Windows SmartScreen может
-показать предупреждение. Проверяйте SHA-256 перед запуском.
 
-1. Скопируйте `WindowsReactivationAssistant.exe` на флешку или в сетевую папку.
-2. Запустите файл на обслуживаемом компьютере. Установка Python, Node.js,
-   драйверов браузера и постоянное изменение системных настроек не требуются.
-3. В открывшемся Edge вручную пройдите CAPTCHA и, если потребуется, войдите в
-   Microsoft Account.
-4. Проверьте вставленный Installation ID и нажмите Submit вручную.
+The executable is **not digitally signed**. Windows may show a warning.
+Check its SHA-256 against the published checksum before running it.
 
-## Запуск из исходников
+1. Copy the EXE to a dedicated folder on the serviced PC or a USB drive.
+2. Run it on the PC being serviced.
+3. Complete CAPTCHA and Microsoft account sign-in manually in Edge, if requested.
+4. Review the Installation ID and click Submit manually.
+5. Continue the official process manually. Version 1.0 does not retrieve or
+   apply the Confirmation ID for you.
+
+## Run from source
 
 ```powershell
 python -m venv .venv
@@ -77,79 +91,74 @@ python -m venv .venv
 .\.venv\Scripts\python src\main.py
 ```
 
-## Сборка EXE
+## Build the executable
 
 ```powershell
 .\.venv\Scripts\python -m pip install -r requirements-build.txt
 powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-Готовые файлы появятся в `release\`. Скрипт также создаёт
-`SHA256SUMS.txt` для проверки целостности сборки.
+The build script uses `.venv\Scripts\python.exe` when available, otherwise
+`python` from PATH. You can also pass `-Python <path-to-python.exe>`.
 
-## Параметры командной строки
+Build output is placed in `release\`, including the EXE, README and
+`SHA256SUMS.txt`.
 
-| Параметр | Назначение |
+## Command-line options
+
+| Option | Purpose |
 |---|---|
-| без параметров | обычный запуск |
-| `--license-only` | только сведения о Windows, лицензии и IID; без браузера |
-| `--verbose` | подробный вывод в консоль |
-| `--keep-profile` | не стирать сессию Microsoft при выходе |
-| `--close-browser` | закрыть Edge после безопасной остановки |
-| `--reset-profile` | удалить `BrowserProfile` и выйти из аккаунта |
-| `--cleanup` | попытаться удалить профиль, логи, временные файлы и связанную историю оболочки |
-| `--write-config` | создать `config.json` со значениями по умолчанию |
-| `--no-pause` | не ждать нажатия Enter перед выходом |
+| No options | Run the normal workflow |
+| `--license-only` | Read Windows, license and IID information without opening the browser |
+| `--verbose` | Include detailed console output |
+| `--keep-profile` | Keep the Microsoft session instead of erasing it at the end |
+| `--close-browser` | Close Edge after the handoff point |
+| `--reset-profile` | Remove the dedicated browser profile and sign out |
+| `--cleanup` | Attempt to remove the profile, logs, temporary files and matching shell history |
+| `--write-config` | Create a local `config.json` with default settings |
+| `--no-pause` | Exit without waiting for Enter |
 
-## Локальные данные и безопасность
+## Local data and privacy
 
-Рядом с EXE могут появляться:
+The following may be created next to the executable:
 
-- `BrowserProfile\` — отдельный профиль Edge;
-- `Logs\` — журналы работы;
-- `Temp\` — временные файлы Edge;
-- `config.json` — необязательные локальные настройки.
+- `BrowserProfile\`: the dedicated Edge profile.
+- `Logs\`: diagnostic logs.
+- `Temp\`: Edge temporary files.
+- `config.json`: optional local settings.
 
-После завершения интерактивного сеанса программа по умолчанию пытается стереть
-профиль Microsoft. При аварийном или неинтерактивном завершении он может
-остаться на носителе: используйте `--cleanup` перед передачей носителя другому
-человеку. Полный Product Key, часть ключа, email, пароль, MFA-коды и полный
-Installation ID в логи не записываются. Даже с маскированием профиль и логи
-следует считать чувствительными локальными данными.
+After an interactive session, the assistant attempts to erase its Microsoft
+sign-in profile by default. A crash or non-interactive exit can leave the
+profile behind. Use `--cleanup` before handing the drive to another person.
 
-Профили браузера, логи, конфигурация и сборочные результаты исключены из Git и
-не должны публиковаться вместе с исходниками.
+The program avoids logging credentials and full identifiers, and masks
+product keys, Installation IDs, email addresses and other sensitive patterns.
+Even with redaction, treat browser profiles and logs as sensitive local data.
+Profiles, logs, configuration and build output are excluded from Git.
 
-При стирании сессии и `--cleanup` программа также точечно удаляет в текущем профиле
-Windows записи FeatureUsage, UserAssist, JumplistData и jump-list файлы, совпадающие с
-выделенным профилем Edge. Другие записи и обычный профиль Edge не затрагиваются.
-Очистка выполняется по возможности: занятые файлы или запрет доступа могут помешать её завершению;
-`--cleanup` сообщает об обнаруженных ошибках ненулевым кодом. `config.json`
-сохраняется; полное отсутствие всех возможных следов Windows не гарантируется.
+Session erasure and `--cleanup` also attempt to remove matching current-user
+Windows shell-history entries: FeatureUsage, UserAssist, JumplistData and
+jump-list files associated with the dedicated Edge profile. Cleanup is
+best-effort; locked files or access restrictions can prevent completion.
+`--cleanup` returns a nonzero code for detected failures. It keeps
+`config.json` and does not guarantee removal of every possible Windows trace.
 
-Для защиты от ошибочного удаления `profile_dir` должен быть отдельной локальной
-подпапкой рядом с программой. Внешние пути, перенаправления и непомеченные
-непустые каталоги отклоняются.
+To guard against accidental deletion, `profile_dir` must be a dedicated local
+subfolder inside the program directory, outside `Temp\`. External paths,
+redirected directories and unrecognised non-empty folders are rejected.
 
-## Коды ошибок
+## Error codes
 
-| Код | Значение |
+| Code | Meaning |
 |---|---|
-| `EDGE_NOT_FOUND` | Edge не найден |
-| `EDGE_LAUNCH_FAILED` | Edge не открыл порт автоматизации |
-| `INSTALLATION_ID_NOT_AVAILABLE` | Windows не выдала Installation ID |
-| `MICROSOFT_LOGIN_REQUIRED` | требуется ручной вход |
-| `HUMAN_VERIFICATION_REQUIRED` | требуется вручную пройти CAPTCHA |
-| `PORTAL_TIMEOUT` | портал не ответил вовремя |
-| `PORTAL_LAYOUT_CHANGED` | структура страницы изменилась |
-| `IID_FIELD_NOT_FOUND` | поле Installation ID не найдено |
-| `IID_INSERT_FAILED` | Installation ID не появился в поле |
-| `SUBMIT_BUTTON_NOT_FOUND` | кнопка Submit не найдена |
-| `UNSAFE_PROFILE_DIRECTORY` | профиль находится вне безопасной локальной папки |
-
-## Граница автоматизации
-
-Автоматическая отправка Installation ID, получение Confirmation ID и
-применение Confirmation ID намеренно не реализованы. Результат работы программы
-— подготовленная и проверяемая оператором страница официального портала перед
-ручным Submit.
+| `EDGE_NOT_FOUND` | Microsoft Edge was not found |
+| `EDGE_LAUNCH_FAILED` | Edge did not open its automation port |
+| `INSTALLATION_ID_NOT_AVAILABLE` | Windows did not provide an Installation ID |
+| `MICROSOFT_LOGIN_REQUIRED` | Manual sign-in is required |
+| `HUMAN_VERIFICATION_REQUIRED` | Manual CAPTCHA completion is required |
+| `PORTAL_TIMEOUT` | A portal step timed out |
+| `PORTAL_LAYOUT_CHANGED` | The portal layout was not recognised |
+| `IID_FIELD_NOT_FOUND` | An Installation ID field was not found |
+| `IID_INSERT_FAILED` | The entered Installation ID could not be verified |
+| `SUBMIT_BUTTON_NOT_FOUND` | Submit could not be located |
+| `UNSAFE_PROFILE_DIRECTORY` | The configured profile directory is unsafe or not owned by the assistant |
