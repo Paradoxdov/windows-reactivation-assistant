@@ -5,9 +5,9 @@ Windows PCs through Microsoft's Product Activation Portal. It handles the
 repetitive preparation: reading licensing information, retrieving the
 Installation ID, navigating the portal and filling in the form.
 
-**Version 1.0 automates preparation up to Submit.** The operator completes the
-remaining steps manually. Automating Confirmation ID retrieval and application
-is the next development stage, not a feature ruled out of the project.
+**The tool automatically retrieves your Installation ID from Windows, fills it
+into Microsoft's activation portal, and verifies the entered value.** It then
+pauses before Submit so you can review and continue manually.
 
 This is an independent project, not affiliated with Microsoft. It does not
 bypass licensing. The current version does not install product keys or apply
@@ -48,18 +48,19 @@ PC's licensing state.
 Licensing queries are read-only and use `SoftwareLicensingProduct`. The current
 version does not invoke `slmgr /ipk`, `/upk`, `/cpky`, `/ato` or `/atp`.
 
-## Current scope and next stage
+## Installation ID and Confirmation ID
 
-**Available in v1.0:** Windows and license detection, Installation ID retrieval,
-portal navigation, form filling and handoff before Submit.
+These are two different identifiers used at different steps:
 
-**Next automation stage:** submitting the Installation ID, retrieving the
-Confirmation ID and applying it to complete reactivation, after validating the
-full workflow on a target PC.
+- **Installation ID (IID)** comes from Windows. The tool already retrieves it
+  automatically, fills it into the portal, and verifies the entered value.
+- **Confirmation ID (CID)** is the response provided by Microsoft after the
+  submitted request is accepted. It is then applied in Windows to complete
+  activation. Confirmation ID retrieval and application are not automated in
+  the current version.
 
-These follow-on steps are not yet automated in the published v1.0 executable.
-They are a continuation of the intended workflow, not a permanent exclusion.
-Until then, the operator continues manually using the portal's instructions.
+The operator reviews the filled form, clicks Submit, and follows the portal's
+instructions to complete the remaining steps manually.
 
 ## Requirements
 
